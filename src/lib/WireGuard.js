@@ -141,13 +141,14 @@ H4 = ${config.server.h4}
     for (const [clientId, client] of Object.entries(config.clients)) {
       if (!client.enabled) continue;
 
+      let allowedips_adding = client.allowedIPs ? ',' + client.allowedIPs : '';
       result += `
 
 # Client: ${client.name} (${clientId})
 [Peer]
 PublicKey = ${client.publicKey}
 ${client.preSharedKey ? `PresharedKey = ${client.preSharedKey}\n` : ''
-}AllowedIPs = ${client.address}/32`;
+}AllowedIPs = ${client.address}/32 ${allowedips_adding}`;
     }
 
     debug('Config saving...');
@@ -219,6 +220,7 @@ ${client.preSharedKey ? `PresharedKey = ${client.preSharedKey}\n` : ''
         client.endpoint = endpoint === '(none)' ? null : endpoint;
         client.transferRx = Number(transferRx);
         client.transferTx = Number(transferTx);
+        client.allowedIPs = allowedIps;
         client.persistentKeepalive = persistentKeepalive;
       });
 
@@ -389,6 +391,15 @@ Endpoint = ${WG_HOST}:${WG_CONFIG_PORT}`;
     }
 
     client.address = address;
+    client.updatedAt = new Date();
+
+    await this.saveConfig();
+  }
+
+  async updateClientAllowedIPS({ clientId, ips }) {
+    const client = await this.getClient({ clientId });
+
+    client.allowedIPs = ips;
     client.updatedAt = new Date();
 
     await this.saveConfig();

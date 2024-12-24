@@ -5,6 +5,8 @@
 
 'use strict';
 
+const CHANGELOG_URL = 'https://raw.githubusercontent.com/mindst0rm/amneziawg-web-ui/master/docs/changelog.json';
+
 function bytes(bytes, decimals, kib, maxunit) {
   kib = kib || false;
   if (bytes === 0) return '0 B';
@@ -84,6 +86,8 @@ new Vue({
     clientEditAddressId: null,
     clientEditExpireDate: null,
     clientEditExpireDateId: null,
+    clientEditAllowedIPS: null,
+    clientEditAllowedIPSId: null,
     qrcode: null,
 
     currentRelease: null,
@@ -363,6 +367,11 @@ new Vue({
       } else {
         alert('Failed to load your file!');
       }
+    },
+    updateClientAllowedIPS(client, ips) {
+      this.api.updateClientAllowedIPS({ clientId: client.id, ips })
+        .catch((err) => alert(err.message || err.toString()))
+        .finally(() => this.refresh().catch(console.error));
     },
     toggleTheme() {
       const themes = ['light', 'dark', 'auto'];
