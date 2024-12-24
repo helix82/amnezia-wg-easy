@@ -312,6 +312,14 @@ module.exports = class Server {
         await WireGuard.updateClientAddress({ clientId, address });
         return { success: true };
       }))
+      .put('/api/wireguard/client/:clientId/allowedips', Util.promisify(async (req, res) => {
+        const { clientId } = req.params;
+        if (clientId === '__proto__' || clientId === 'constructor' || clientId === 'prototype') {
+          res.end(403);
+        }
+        const { ips } = req.body;
+        return WireGuard.updateClientAllowedIPS({ clientId, ips });
+      }))
       .put('/api/wireguard/client/:clientId/expireDate', defineEventHandler(async (event) => {
         const clientId = getRouterParam(event, 'clientId');
         if (clientId === '__proto__' || clientId === 'constructor' || clientId === 'prototype') {
