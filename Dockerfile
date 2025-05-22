@@ -1,9 +1,9 @@
 # As a workaround we have to build on nodejs 18
 # nodejs 20 hangs on build with armv6/armv7
-FROM docker.io/library/node:23-alpine AS build_node_modules
+FROM docker.io/library/node:20-alpine AS build_node_modules
 
 # Update npm to latest
-RUN npm install -g npm@latest
+RUN npm install -g npm@10
 
 # Copy Web UI
 COPY src /app
